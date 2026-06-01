@@ -1,9 +1,9 @@
 import './lista-suspensa.estilo.css'
 
-export function ListaSuspensa() {
+export function ListaSuspensa({ props }) {
     return (
-        <select ClassName='lista-suspensa-form'>
+        <select className='lista-suspensa-form' {...props}>
             <option value=""></option>
-        </select >
+        </select>
     )
 }

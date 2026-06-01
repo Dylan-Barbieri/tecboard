@@ -36,13 +36,13 @@ export function FormularioDeEvento() {
           />
         </CampoDeFormulario>
         <CampoDeFormulario>
-          <Label htmlFor="dataEvento">
-            Data do evento?
+          <Label htmlFor="temaEvento">
+            Tema do Evento
           </Label>
-          <ListaSuspensa />
+          <ListaSuspensa id="temaEvento" name="temaEvento" />
         </CampoDeFormulario>
       </div>
-      < div className="acoes">
+      <div className="acoes">
       <Botao>
         Criar Evento
       </Botao>
