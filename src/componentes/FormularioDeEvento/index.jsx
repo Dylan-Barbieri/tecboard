@@ -6,10 +6,25 @@ import { TituloFormulario } from "../TituloFormulario";
 import { Botao } from "../Botao";
 import { ListaSuspensa } from "../ListaSuspensa";
 
-export function FormularioDeEvento() {
+export function FormularioDeEvento({ temas, aoSubmeter }) {
+  const temasArr = temas
+
+  function aoFormSubmetido(evento) {
+    evento.preventDefault()
+    const formData = new FormData(evento.target)
+    const novoEvento = {
+      capa: formData.get('capa'),
+      tema: temas.find(function (tema) {
+        return tema.id === Number(formData.get('tema'))
+      }),
+      data: new Date(formData.get('dataEvento')),
+      titulo: formData.get('nomeEvento')
+    }
+    aoSubmeter(novoEvento)
+  }
 
   return (
-    <form className="form-evento">
+    <form className="form-evento" onSubmit={aoFormSubmetido}>
       <TituloFormulario>
         Preencha para criar um evento:
       </TituloFormulario>
@@ -26,6 +41,17 @@ export function FormularioDeEvento() {
           />
         </CampoDeFormulario>
         <CampoDeFormulario>
+          <Label htmlFor="capa">
+            Qual o endereço da imagem de capa?
+          </Label>
+          <CampoDeEntrada
+            type="text"
+            id="capa"
+            placeholder='https://...'
+            name='capa'
+          />
+        </CampoDeFormulario>
+        <CampoDeFormulario>
           <Label htmlFor="dataEvento">
             Data do evento?
           </Label>
@@ -36,16 +62,16 @@ export function FormularioDeEvento() {
           />
         </CampoDeFormulario>
         <CampoDeFormulario>
-          <Label htmlFor="temaEvento">
+          <Label htmlFor="tema">
             Tema do Evento
           </Label>
-          <ListaSuspensa id="temaEvento" name="temaEvento" />
+          <ListaSuspensa id="tema" name="tema" itens={temasArr} />
         </CampoDeFormulario>
       </div>
       <div className="acoes">
-      <Botao>
-        Criar Evento
-      </Botao>
+        <Botao>
+          Criar Evento
+        </Botao>
       </div>
     </form>
   )
