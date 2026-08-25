@@ -12,13 +12,23 @@ export function FormularioDeEvento({ temas, aoSubmeter }) {
   function aoFormSubmetido(evento) {
     evento.preventDefault()
     const formData = new FormData(evento.target)
+    const titulo = formData.get('nomeEvento')
+    const capa = formData.get('capa')
+    const data = formData.get('dataEvento')
+    const temaId = Number(formData.get('tema'))
+
+    if (!titulo || !data || !temaId) {
+      alert('Preencha o nome, a data e o tema do evento.')
+      return
+    }
+
     const novoEvento = {
-      capa: formData.get('capa'),
+      capa: capa,
       tema: temas.find(function (tema) {
-        return tema.id === Number(formData.get('tema'))
+        return tema.id === temaId
       }),
-      data: new Date(formData.get('dataEvento')),
-      titulo: formData.get('nomeEvento')
+      data: new Date(data),
+      titulo: titulo
     }
     aoSubmeter(novoEvento)
   }

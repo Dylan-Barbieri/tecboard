@@ -1,58 +1,133 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { Banner } from './componentes/Banner'
 import { FormularioDeEvento } from './componentes/FormularioDeEvento'
 import { Tema } from './componentes/Tema'
 import { CardEvento } from './componentes/CardEventos'
+
+const API_URL = 'http://localhost:3001/eventos'
+
+const temas = [
+  {
+    id: 1,
+    nome: 'front-end'
+  },
+  {
+    id: 2,
+    nome: 'back-end'
+  },
+  {
+    id: 3,
+    nome: 'devops'
+  },
+  {
+    id: 4,
+    nome: 'inteligência artificial'
+  },
+  {
+    id: 5,
+    nome: 'data science'
+  },
+  {
+    id: 6,
+    nome: 'cloud'
+  }
+]
+
 function App() {
 
+  const [eventos, setEventos] = useState([])
 
-
-  const temas = [
-    {
-      id: 1,
-      nome: 'front-end'
-    },
-    {
-      id: 2,
-      nome: 'back-end'
-    },
-    {
-      id: 3,
-      nome: 'devops'
-    },
-    {
-      id: 4,
-      nome: 'inteligência artificial'
-    },
-    {
-      id: 5,
-      nome: 'data science'
-    },
-    {
-      id: 6,
-      nome: 'cloud'
+  function normalizarEvento(evento) {
+    const tema = temas.find(function (t) {
+      return t.nome === evento.tema
+    }) || { id: 0, nome: evento.tema }
+    return {
+      id: evento.id,
+      capa: evento.capa,
+      tema: tema,
+      data: new Date(evento.data),
+      titulo: evento.titulo
     }
-  ]
+  }
 
-  const [eventos, setEventos] = useState([
-    {
-      capa: 'https://raw.githubusercontent.com/viniciosneves/tecboard-assets/refs/heads/main/imagem_1.png',
-      tema: temas[0],
-      data: new Date(),
-      titulo: 'Mulheres no Front'
-    }
-  ])
-
-
+  useEffect(function () {
+    fetch(API_URL)
+      .then(function (resposta) {
+        return resposta.json()
+      })
+      .then(function (eventosAPI) {
+        setEventos(eventosAPI.map(normalizarEvento))
+      })
+      .catch(function (erro) {
+        console.error('Erro ao carregar eventos:', erro)
+      })
+  }, [])
 
   function adicionarEvento(evento) {
-    // eventos.push(evento)
-    // console.log('eventos =>', eventos)
-    setEventos([...eventos, evento])
+    const corpo = {
+      capa: evento.capa,
+      tema: evento.tema.nome,
+      data: evento.data.toISOString().slice(0, 10),
+      titulo: evento.titulo
+    }
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(corpo)
+    })
+      .then(function (resposta) {
+        return resposta.json()
+      })
+      .then(function (eventoCriado) {
+        setEventos([...eventos, normalizarEvento(eventoCriado)])
+      })
+      .catch(function (erro) {
+        console.error('Erro ao criar evento:', erro)
+        alert('Não foi possível criar o evento. Verifique se a API está rodando.')
+      })
   }
-  
- //renderização condicional usando &&
+
+  function atualizarEvento(id, evento) {
+    const corpo = {
+      capa: evento.capa,
+      tema: evento.tema.nome,
+      data: typeof evento.data === 'string' ? evento.data : evento.data.toISOString().slice(0, 10),
+      titulo: evento.titulo
+    }
+    fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(corpo)
+    })
+      .then(function (resposta) {
+        return resposta.json()
+      })
+      .then(function (eventoAtualizado) {
+        setEventos(eventos.map(function (eventoItem) {
+          return eventoItem.id === eventoAtualizado.id
+            ? normalizarEvento(eventoAtualizado)
+            : eventoItem
+        }))
+      })
+      .catch(function (erro) {
+        console.error('Erro ao atualizar evento:', erro)
+      })
+  }
+
+  function removerEvento(id) {
+    fetch(`${API_URL}/${id}`, {
+      method: 'DELETE'
+    })
+      .then(function () {
+        setEventos(eventos.filter(function (evento) {
+          return evento.id !== id
+        }))
+      })
+      .catch(function (erro) {
+        console.error('Erro ao excluir evento:', erro)
+      })
+  }
 
   return (
     <main>
@@ -78,32 +153,19 @@ function App() {
                   return evento.tema.id == tema.id
                 })
                 .map(function (evento, indice) {
-                  return <CardEvento evento={evento} key={indice} />
+                  return <CardEvento
+                    evento={evento}
+                    temas={temas}
+                    aoEditar={atualizarEvento}
+                    aoRemover={removerEvento}
+                    key={evento.id ?? indice}
+                  />
                 })}
               </div>
             </section>
           )
         })}
       </section>
-
-      {/* <section>
-        <Tema tema={temas[0]} />
-      </section>
-      <section>
-        <Tema tema={temas[1]} />
-      </section>
-      <section>
-        <Tema tema={temas[2]} />
-      </section>
-      <section>
-        <Tema tema={temas[3]} />
-      </section>
-      <section>
-        <Tema tema={temas[4]} />
-      </section>
-      <section>
-        <Tema tema={temas[5]} />
-      </section> */}
     </main>
   )
 }

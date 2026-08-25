@@ -44,3 +44,69 @@
     font-weight: 700;
     line-height: 125%;
 }
+
+.card-evento .acoes {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.card-evento .botao-acao {
+    background-color: #4A4949;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: #FFFFFF;
+    font-family: "Orbitron", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.card-evento .botao-acao:hover {
+    filter: brightness(1.2);
+}
+
+.card-evento .botao-acao.excluir {
+    background-color: #7a1f2b;
+}
+
+.card-evento .botao-acao.cancelar {
+    background-color: #555;
+}
+
+.card-evento.edicao .corpo {
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card-evento.edicao label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    font-size: 12px;
+    font-family: "Work Sans", sans-serif;
+    color: #CCCCCC;
+}
+
+.card-evento.edicao input,
+.card-evento.edicao select {
+    background-color: #2E2E2E;
+    border: 1px solid #4A4949;
+    border-radius: 4px;
+    padding: 8px;
+    color: #FFFFFF;
+    font-family: "Work Sans", sans-serif;
+    font-size: 13px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card-evento.edicao input:focus,
+.card-evento.edicao select:focus {
+    outline: none;
+    border-color: #6ab04c;
+}

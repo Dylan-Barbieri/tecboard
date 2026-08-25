@@ -1,3 +1,10 @@
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+
+api/node_modules
+
 # Logs
 logs
 *.log
